@@ -20,14 +20,14 @@
       --psc-cyan: #00A3E0;
       --psc-gold: #E8A33D;
       --psc-dark: #1A202C;
-      --psc-light: #F5F8FA;
+      --psc-light: #F8FAFC;
       --psc-border: #E2E8F0;
       --psc-white: #FFFFFF;
       --psc-radius: 16px;
       --psc-radius-sm: 10px;
-      --psc-shadow-sm: 0 2px 10px rgba(0, 43, 73, 0.06);
-      --psc-shadow-md: 0 14px 32px rgba(0, 43, 73, 0.12);
-      --psc-shadow-lg: 0 24px 60px rgba(0, 43, 73, 0.18);
+      --psc-shadow-sm: 0 2px 10px rgba(0, 43, 73, 0.05);
+      --psc-shadow-md: 0 12px 28px rgba(0, 43, 73, 0.09);
+      --psc-shadow-lg: 0 20px 50px rgba(0, 43, 73, 0.14);
       --psc-font-heading: 'Aleo', Georgia, serif;
       --psc-font-body: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     }
@@ -44,21 +44,12 @@
       font-family: var(--psc-font-body);
       background-color: var(--psc-light);
       background-image:
-        linear-gradient(rgba(0, 43, 73, 0.035) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(0, 43, 73, 0.035) 1px, transparent 1px);
+        linear-gradient(rgba(0, 43, 73, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 43, 73, 0.03) 1px, transparent 1px);
       background-size: 36px 36px;
       color: var(--psc-dark);
       line-height: 1.5;
-      padding: 24px 20px;
-    }
-
-    #scroll-progress {
-      position: fixed;
-      top: 0; left: 0;
-      height: 3px;
-      width: 0%;
-      background: linear-gradient(90deg, var(--psc-cyan), var(--psc-navy));
-      z-index: 999;
+      padding: 32px 20px;
     }
 
     .form-container {
@@ -67,7 +58,6 @@
       background: var(--psc-white);
       border-radius: var(--psc-radius);
       box-shadow: var(--psc-shadow-lg);
-      overflow: hidden;
       animation: riseIn 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
     }
 
@@ -76,44 +66,148 @@
       to { opacity: 1; transform: translateY(0); }
     }
 
-    .toc-nav {
-      position: fixed;
-      top: 50%; right: 26px;
-      transform: translateY(-50%);
-      display: flex; flex-direction: column; gap: 15px;
-      z-index: 60;
+    .stepper-bar {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      background: var(--psc-white);
+      border-bottom: 1px solid var(--psc-border);
+      padding: 14px 36px 12px;
     }
 
-    .toc-nav a {
-      position: relative; display: block;
-      width: 10px; height: 10px; border-radius: 50%;
-      background: #CBD5E0;
-      transition: background-color 0.25s ease, transform 0.25s ease;
+    .stepper-top-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 9px;
     }
 
-    .toc-nav a::after {
-      content: attr(data-label);
-      position: absolute; right: 22px; top: 50%;
-      transform: translateY(-50%);
-      white-space: nowrap; background: var(--psc-navy);
-      color: #fff; padding: 6px 12px; border-radius: 6px;
-      font-size: 0.75rem; font-weight: 500;
-      opacity: 0; pointer-events: none;
-      transition: opacity 0.2s ease;
+    .stepper-label {
+      font-family: var(--psc-font-heading);
+      font-weight: 700;
+      color: var(--psc-navy);
+      font-size: 0.92rem;
     }
 
-    .toc-nav a:hover::after, .toc-nav a.active::after { opacity: 1; }
-    .toc-nav a.active { background: var(--psc-cyan); transform: scale(1.35); }
+    .stepper-count {
+      font-size: 0.76rem;
+      color: #718096;
+      font-weight: 600;
+      white-space: nowrap;
+    }
 
-    @media (max-width: 1360px) { .toc-nav { display: none; } }
+    .stepper-track {
+      height: 5px;
+      background: #EDF2F7;
+      border-radius: 6px;
+      overflow: hidden;
+    }
+
+    .stepper-fill {
+      height: 100%;
+      width: 11.11%;
+      background: linear-gradient(90deg, var(--psc-cyan), var(--psc-navy));
+      border-radius: 6px;
+      transition: width 0.35s ease;
+    }
+
+    .stepper-dots {
+      display: flex;
+      gap: 6px;
+      margin-top: 10px;
+      overflow-x: auto;
+      scrollbar-width: none;
+      padding-bottom: 2px;
+    }
+    .stepper-dots::-webkit-scrollbar { display: none; }
+
+    .step-dot {
+      flex-shrink: 0;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      border: 1.5px solid var(--psc-border);
+      background: var(--psc-white);
+      color: #A0AEC0;
+      font-family: var(--psc-font-body);
+      font-weight: 700;
+      font-size: 0.7rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .step-dot:hover { border-color: var(--psc-cyan); color: var(--psc-navy); }
+
+    .step-dot.is-current {
+      background: var(--psc-navy);
+      border-color: var(--psc-navy);
+      color: #fff;
+      transform: scale(1.1);
+    }
+
+    .step-dot.is-done {
+      background: rgba(0, 163, 224, 0.15);
+      border-color: var(--psc-cyan);
+      color: var(--psc-navy);
+    }
+
     @media (max-width: 600px) {
-      body { padding: 0; }
+      .stepper-bar { padding: 12px 16px 10px; }
+      .stepper-label { font-size: 0.82rem; }
+    }
+
+    .step-nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-top: 6px;
+      margin-bottom: 6px;
+    }
+
+    .step-nav-btn {
+      font-family: var(--psc-font-body);
+      font-weight: 600;
+      font-size: 0.88rem;
+      padding: 11px 22px;
+      border-radius: var(--psc-radius-sm);
+      cursor: pointer;
+      transition: all 0.2s ease;
+      border: 1.5px solid var(--psc-border);
+      background: var(--psc-white);
+      color: var(--psc-navy);
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .step-nav-btn:hover { border-color: var(--psc-cyan); background: rgba(0, 163, 224, 0.05); }
+
+    .step-nav-btn.primary {
+      background: linear-gradient(135deg, var(--psc-navy), #014a75);
+      color: #fff;
+      border: none;
+      box-shadow: var(--psc-shadow-sm);
+      margin-left: auto;
+    }
+
+    .step-nav-btn.primary:hover {
+      background: linear-gradient(135deg, #014a75, var(--psc-cyan));
+      box-shadow: var(--psc-shadow-md);
+    }
+
+    @media (max-width: 600px) {
+      body { padding: 10px 0; }
       .form-container { border-radius: 0; }
-      .form-header { padding: 22px 18px 20px; }
+      .form-header { padding: 24px 20px; }
       .form-header h1 { font-size: 1.3rem; gap: 9px; }
       .hero-icon { width: 32px; height: 32px; font-size: 0.85rem; }
-      form { padding: 16px; }
-      .fieldset { padding: 13px 14px 13px; }
+      form { padding: 20px 16px; }
+      .fieldset { padding: 18px 16px; margin-bottom: 18px; }
     }
 
     .form-header {
@@ -123,76 +217,90 @@
         linear-gradient(135deg, var(--psc-navy) 0%, #01426b 55%, var(--psc-navy-deep) 100%);
       background-size: 28px 28px, 28px 28px, 100% 100%;
       color: var(--psc-white);
-      padding: 26px 32px 24px;
-      display: flex; flex-direction: column; gap: 12px;
+      padding: 30px 36px 26px;
+      display: flex; flex-direction: column; gap: 14px;
       position: relative;
+      border-radius: var(--psc-radius) var(--psc-radius) 0 0;
+    }
+
+    .brand-logo-container {
+      display: inline-flex;
+      align-items: center;
+      background: #FFFFFF;
+      padding: 10px 18px;
+      border-radius: 10px;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18);
+      max-width: 290px;
+      width: 100%;
     }
 
     .brand-logo {
-      max-width: 260px; width: 100%; height: auto; display: block;
-      filter: drop-shadow(0 6px 14px rgba(0, 0, 0, 0.25));
+      width: 100%;
+      height: auto;
+      display: block;
+      object-fit: contain;
     }
 
-    .coverage-strip { display: flex; flex-wrap: wrap; gap: 7px; }
+    .coverage-strip { display: flex; flex-wrap: wrap; gap: 8px; }
     .coverage-chip {
       display: inline-flex; align-items: center; gap: 6px;
       background: rgba(255, 255, 255, 0.08);
       border: 1px solid rgba(255, 255, 255, 0.16);
-      color: #E2E8F0; padding: 5px 12px; border-radius: 20px;
-      font-size: 0.73rem; font-weight: 500;
+      color: #E2E8F0; padding: 6px 14px; border-radius: 20px;
+      font-size: 0.75rem; font-weight: 500;
     }
-    .coverage-chip i { color: var(--psc-cyan); font-size: 0.75rem; }
+    .coverage-chip i { color: var(--psc-cyan); font-size: 0.78rem; }
 
     .form-header h1 {
       font-family: var(--psc-font-heading);
-      font-size: 1.6rem; font-weight: 700; letter-spacing: -0.5px;
-      display: flex; align-items: center; gap: 12px; margin-top: 2px;
+      font-size: 1.65rem; font-weight: 700; letter-spacing: -0.5px;
+      display: flex; align-items: center; gap: 12px; margin-top: 4px;
     }
 
     .hero-icon {
       display: inline-flex; align-items: center; justify-content: center;
-      width: 36px; height: 36px; border-radius: 50%;
+      width: 38px; height: 38px; border-radius: 50%;
       background: rgba(0, 163, 224, 0.18); color: var(--psc-cyan);
-      font-size: 0.95rem; flex-shrink: 0;
+      font-size: 1rem; flex-shrink: 0;
     }
 
     .purpose-banner {
       background: rgba(255, 255, 255, 0.07);
       border: 1px solid rgba(255, 255, 255, 0.14);
-      padding: 13px 18px; border-radius: var(--psc-radius-sm);
-      font-size: 0.85rem; color: #E2E8F0; line-height: 1.5;
+      padding: 14px 18px; border-radius: var(--psc-radius-sm);
+      font-size: 0.86rem; color: #E2E8F0; line-height: 1.55;
     }
 
-    form { padding: 26px 28px; }
+    form { padding: 32px 36px; }
 
     .fieldset {
       border: 1px solid var(--psc-border);
       border-radius: var(--psc-radius-sm);
-      padding: 16px 20px 16px; margin-bottom: 14px;
+      padding: 22px 24px 22px; margin-bottom: 24px;
       background-color: var(--psc-white);
       box-shadow: var(--psc-shadow-sm);
       transition: opacity 0.3s ease, background-color 0.3s ease, box-shadow 0.25s ease;
       scroll-margin-top: 24px;
     }
 
-    .fieldset:focus-within { box-shadow: var(--psc-shadow-md); }
+    .fieldset:focus-within { box-shadow: var(--psc-shadow-md); border-color: rgba(0, 163, 224, 0.4); }
     .fieldset.disabled-section { opacity: 0.55; background-color: #F8FAFC; box-shadow: none; }
 
     .fieldset legend {
       font-family: var(--psc-font-heading);
-      font-weight: 700; color: var(--psc-navy); padding: 0 6px;
-      font-size: 1.05rem; letter-spacing: 0.2px;
+      font-weight: 700; color: var(--psc-navy); padding: 0 8px;
+      font-size: 1.08rem; letter-spacing: 0.2px;
       display: flex; align-items: center; gap: 10px; width: auto;
     }
 
-    .fieldset legend i { color: var(--psc-cyan); font-size: 0.92rem; }
+    .fieldset legend i { color: var(--psc-cyan); font-size: 0.95rem; }
 
     .section-num {
       display: inline-flex; align-items: center; justify-content: center;
-      width: 23px; height: 23px; border-radius: 50%;
+      width: 24px; height: 24px; border-radius: 50%;
       background: var(--psc-navy); color: #fff;
       font-family: var(--psc-font-body); font-weight: 700;
-      font-size: 0.72rem; flex-shrink: 0;
+      font-size: 0.74rem; flex-shrink: 0;
     }
 
     .badge-mandatory {
@@ -227,23 +335,52 @@
     .section-toggle-wrap input[type="checkbox"]:checked::after { transform: translateX(14px); }
 
     .section-intro {
-      background: linear-gradient(135deg, rgba(0, 163, 224, 0.07), rgba(0, 43, 73, 0.03));
-      border: 1px solid rgba(0, 43, 73, 0.06); padding: 9px 14px;
-      font-size: 0.82rem; color: #4A5568; margin-bottom: 14px; border-radius: 8px;
+      background: linear-gradient(135deg, rgba(0, 163, 224, 0.06), rgba(0, 43, 73, 0.02));
+      border: 1px solid rgba(0, 43, 73, 0.06); padding: 10px 16px;
+      font-size: 0.83rem; color: #4A5568; margin-bottom: 18px; border-radius: 8px; line-height: 1.5;
     }
 
-    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px 16px; }
-    .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px 16px; }
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px 20px; }
+    .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px 20px; }
 
     @media (max-width: 650px) { .grid-2, .grid-3 { grid-template-columns: 1fr; } }
 
-    .form-group { margin-bottom: 10px; display: flex; flex-direction: column; }
-    .label-wrapper { display: flex; align-items: center; gap: 6px; margin-bottom: 3px; }
-    label { font-weight: 600; font-size: 0.82rem; color: var(--psc-navy); }
+    .form-group { margin-bottom: 16px; display: flex; flex-direction: column; }
+    .form-group:last-child { margin-bottom: 0; }
+
+    .label-wrapper { display: flex; align-items: center; gap: 6px; margin-bottom: 6px; }
+    label { font-weight: 600; font-size: 0.83rem; color: var(--psc-navy); }
     label .req { color: #E53E3E; }
 
+    .cover-desc {
+      font-size: 0.76rem;
+      color: #64748B;
+      margin-top: 4px;
+      font-weight: normal;
+      line-height: 1.35;
+    }
+
+    .sub-panel {
+      background: #F8FAFC;
+      border: 1px solid var(--psc-border);
+      padding: 16px 18px;
+      border-radius: 10px;
+      margin-top: 10px;
+      margin-bottom: 16px;
+    }
+
+    .sub-panel-title {
+      font-size: 0.88rem;
+      font-weight: 700;
+      color: var(--psc-navy);
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
     .tooltip-container { position: relative; display: inline-flex; align-items: center; cursor: pointer; }
-    .tooltip-icon { color: var(--psc-cyan); font-size: 0.85rem; transition: color 0.2s ease; }
+    .tooltip-icon { color: var(--psc-cyan); font-size: 0.88rem; transition: color 0.2s ease; }
     .tooltip-container:hover .tooltip-icon { color: var(--psc-navy); }
 
     .tooltip-text {
@@ -254,6 +391,7 @@
       transition: opacity 0.2s ease, visibility 0.2s ease;
       font-family: var(--psc-font-body); font-weight: normal;
       font-size: 0.8rem; line-height: 1.45; box-shadow: var(--psc-shadow-md);
+      pointer-events: none;
     }
 
     .tooltip-text::after {
@@ -265,13 +403,13 @@
     .tooltip-container:hover .tooltip-text { visibility: visible; opacity: 1; }
 
     input, select, textarea {
-      font-family: var(--psc-font-body); width: 100%; padding: 8px 12px;
+      font-family: var(--psc-font-body); width: 100%; padding: 9px 13px;
       border: 1.5px solid var(--psc-border); border-radius: 8px; font-size: 0.88rem;
       background-color: #FCFDFE;
       transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
     }
 
-    input[type="file"] { padding: 7px; background-color: #FCFDFE; cursor: pointer; border-style: dashed; }
+    input[type="file"] { padding: 8px; background-color: #FCFDFE; cursor: pointer; border-style: dashed; }
     input[type="file"]:hover { border-color: var(--psc-cyan); }
 
     input:focus, select:focus, textarea:focus {
@@ -279,16 +417,16 @@
       box-shadow: 0 0 0 3px rgba(0, 163, 224, 0.15); background-color: #fff;
     }
 
-    textarea { resize: vertical; min-height: 60px; }
+    textarea { resize: vertical; min-height: 65px; }
 
     .checkbox-group {
-      display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 8px; margin-top: 3px;
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 8px; margin-top: 4px;
     }
 
     .checkbox-label {
       display: flex; align-items: center; gap: 8px; font-weight: normal;
-      cursor: pointer; font-size: 0.83rem; padding: 6px 10px;
+      cursor: pointer; font-size: 0.81rem; padding: 7px 10px;
       border: 1.5px solid var(--psc-border); border-radius: 8px;
       background-color: #FCFDFE; transition: border-color 0.2s ease, background-color 0.2s ease;
     }
@@ -296,30 +434,42 @@
     .checkbox-label:hover { border-color: var(--psc-cyan); background-color: rgba(0, 163, 224, 0.05); }
     .checkbox-label input { width: auto; accent-color: var(--psc-cyan); }
 
-    .motor-grid-container {
-      display: flex; flex-direction: column; gap: 7px;
-      max-height: 340px; overflow-y: auto; padding: 10px;
-      border: 1px solid var(--psc-border); border-radius: 8px;
-      background-color: #FAFCFE;
+    .vehicle-row {
+      background: #FAFCFE;
+      border: 1px solid var(--psc-border);
+      border-radius: 8px;
+      padding: 12px;
+      margin-bottom: 10px;
     }
 
-    .motor-row {
-      display: grid; grid-template-columns: 34px 1fr 1fr;
-      gap: 8px; align-items: center; padding-bottom: 6px;
-      border-bottom: 1px dashed var(--psc-border);
+    .vehicle-grid {
+      display: grid;
+      grid-template-columns: 28px 80px 1.5fr 1fr 1fr;
+      gap: 10px;
+      align-items: center;
     }
 
-    .motor-row input { padding: 6px 10px; font-size: 0.83rem; }
-    .motor-row:last-child { border-bottom: none; padding-bottom: 0; }
-
-    .motor-row .num {
-      font-weight: 700; color: var(--psc-navy); font-size: 0.78rem;
-      text-align: center; background: #EDF2F7; padding: 5px; border-radius: 4px;
+    .vehicle-num {
+      font-weight: 700;
+      color: var(--psc-navy);
+      font-size: 0.78rem;
+      text-align: center;
+      background: #EDF2F7;
+      padding: 6px;
+      border-radius: 4px;
     }
 
-    @media (max-width: 550px) {
-      .motor-row { grid-template-columns: 1fr; gap: 6px; }
-      .motor-row .num { text-align: left; width: fit-content; }
+    .vehicle-add-toggle {
+      margin-top: 10px;
+      padding-top: 8px;
+      border-top: 1px dashed var(--psc-border);
+      display: flex;
+      align-items: center;
+    }
+
+    @media (max-width: 768px) {
+      .vehicle-grid { grid-template-columns: 1fr; }
+      .vehicle-num { width: fit-content; text-align: left; }
     }
 
     .oh-honey { display: none !important; }
@@ -327,11 +477,11 @@
     .submit-btn {
       font-family: var(--psc-font-heading);
       background: linear-gradient(135deg, var(--psc-navy), #014a75);
-      color: var(--psc-white); border: none; padding: 13px 24px;
-      font-size: 1rem; font-weight: 700; letter-spacing: 0.2px;
+      color: var(--psc-white); border: none; padding: 14px 28px;
+      font-size: 1.02rem; font-weight: 700; letter-spacing: 0.2px;
       border-radius: var(--psc-radius-sm); cursor: pointer; width: 100%;
       display: flex; align-items: center; justify-content: center; gap: 10px;
-      box-shadow: var(--psc-shadow-md);
+      box-shadow: var(--psc-shadow-md); margin-top: 10px;
       transition: background 0.3s ease, transform 0.2s ease, box-shadow 0.2s ease;
     }
 
@@ -343,42 +493,30 @@
     .submit-btn:active { transform: translateY(0); }
 
     .status-msg {
-      margin-top: 15px; padding: 14px; border-radius: 8px; text-align: center;
+      margin-top: 18px; padding: 14px; border-radius: 8px; text-align: center;
       font-weight: 600; display: none;
     }
     .status-msg.success { background: #DEF7EC; color: #03543F; border: 1px solid #84E1BC; }
     .status-msg.error { background: #FDE8E8; color: #9B1C1C; border: 1px solid #F8B4B4; }
 
     .form-footer {
-      text-align: center; padding: 12px 30px 22px;
+      text-align: center; padding: 16px 30px 24px;
       font-size: 0.76rem; color: #718096;
     }
   </style>
 </head>
 <body>
 
-  <div id="scroll-progress"></div>
-
-  <nav class="toc-nav" aria-label="Form sections">
-    <a href="#section-details" data-label="1. Insured Details"></a>
-    <a href="#section-md" data-label="2. Property & Material Damage"></a>
-    <a href="#section-bi" data-label="3. Business Interruption"></a>
-    <a href="#section-liability" data-label="4. Liability & Professional Lines"></a>
-    <a href="#section-motor" data-label="5. Commercial Motor Fleet"></a>
-    <a href="#section-cyber" data-label="6. Cyber Risk & Security"></a>
-    <a href="#section-ml" data-label="7. Management Liability"></a>
-    <a href="#section-life" data-label="8. Life & Health Inquiries"></a>
-    <a href="#section-claims" data-label="9. Claims History & Declarations"></a>
-  </nav>
-
   <div class="form-container">
     <div class="form-header">
       <a href="https://www.pscbroking.co.nz/" target="_blank" rel="noopener" style="display:inline-block;">
-        <img class="brand-logo" src="https://www.pscbroking.co.nz/wp-content/uploads/2026/01/PSC-IB-NZ.png" alt="PSC Insurance Brokers NZ" width="557" height="100">
+        <div class="brand-logo-container">
+          <img class="brand-logo" src="https://www.pscbroking.co.nz/wp-content/uploads/2026/01/PSC-IB-NZ.png" alt="PSC Insurance Brokers NZ" width="557" height="100">
+        </div>
       </a>
 
       <div class="coverage-strip">
-        <span class="coverage-chip"><i class="fa-solid fa-building"></i> Property</span>
+        <span class="coverage-chip"><i class="fa-solid fa-building"></i> Property & Stock</span>
         <span class="coverage-chip"><i class="fa-solid fa-chart-line"></i> Business Interruption</span>
         <span class="coverage-chip"><i class="fa-solid fa-shield-halved"></i> Liability</span>
         <span class="coverage-chip"><i class="fa-solid fa-truck-front"></i> Motor Fleet</span>
@@ -389,21 +527,41 @@
       <h1><span class="hero-icon"><i class="fa-solid fa-clipboard-check"></i></span> Commercial Underwriting Schedule</h1>
 
       <div class="purpose-banner">
-        <strong><i class="fa-solid fa-circle-info"></i> Purpose of this Schedule:</strong> Collects operational risk data required by commercial insurers to evaluate, price, and negotiate tailored terms across Material Damage, Business Interruption, Liability, Motor, Management Liability, and Cyber Risk policies.
-        <br><span style="font-size:0.8rem; opacity:0.85; margin-top:4px; display:block;"><i class="fa-solid fa-envelope"></i> Managed by gregpscnz@gmail.com</span>
+        <strong><i class="fa-solid fa-circle-info"></i> Purpose of this Schedule:</strong> Collects operational risk data required by commercial insurers to evaluate, price, and negotiate tailored terms across Material Damage, Contract Works, Business Interruption, Liability, Motor, Management Liability, and Cyber Risk policies.
+        <br><span style="font-size:0.79rem; opacity:0.8; margin-top:6px; display:block;"><i class="fa-solid fa-circle-question"></i> Tap any <i class="fa-solid fa-circle-question" style="color:var(--psc-cyan);"></i> icon next to a question for guidance &nbsp;·&nbsp; <i class="fa-solid fa-envelope"></i> Account Lead: Greg Swaney (Greg.Swaney@Pscbroking.co.nz)</span>
       </div>
     </div>
 
-    <!-- Active Google Apps Script Endpoint -->
-    <form id="underwriting-form" action="https://script.google.com/macros/s/AKfycbyrAfA9GqpzEz8S6NXwUwtpZcS4kBjkBG3t1toFRtLdKRALqYDeFo1ptN1sJ7qaHuGM8A/exec" method="POST">
+    <!-- Connected Active Endpoint -->
+    <form id="underwriting-form" novalidate action="https://script.google.com/macros/s/AKfycbyrAfA9GqpzEz8S6NXwUwtpZcS4kBjkBG3t1toFRtLdKRALqYDeFo1ptN1sJ7qaHuGM8A/exec" method="POST">
       
+      <!-- Anti-Spam Honeypot -->
       <div class="oh-honey">
         <label for="website">Leave this field blank</label>
         <input type="text" id="website" name="_gotcha" tabindex="-1" autocomplete="off">
       </div>
 
+      <div class="stepper-bar" id="stepper-bar">
+        <div class="stepper-top-row">
+          <div class="stepper-label" id="stepper-label">Insured Details, Existing Schedule & Strategy</div>
+          <div class="stepper-count" id="stepper-count">Step 1 of 9</div>
+        </div>
+        <div class="stepper-track"><div class="stepper-fill" id="stepper-fill"></div></div>
+        <div class="stepper-dots" id="stepper-dots">
+          <button type="button" class="step-dot" data-step="1">1</button>
+          <button type="button" class="step-dot" data-step="2">2</button>
+          <button type="button" class="step-dot" data-step="3">3</button>
+          <button type="button" class="step-dot" data-step="4">4</button>
+          <button type="button" class="step-dot" data-step="5">5</button>
+          <button type="button" class="step-dot" data-step="6">6</button>
+          <button type="button" class="step-dot" data-step="7">7</button>
+          <button type="button" class="step-dot" data-step="8">8</button>
+          <button type="button" class="step-dot" data-step="9">9</button>
+        </div>
+      </div>
+
       <!-- Section 1: Client Details & Schedule Upload -->
-      <fieldset class="fieldset" id="section-details">
+      <fieldset class="fieldset" id="section-details" data-step="1">
         <legend><span class="section-num">1</span><i class="fa-solid fa-id-card"></i> Insured Details, Existing Schedule & Strategy</legend>
         <div class="section-intro">
           Identifies the legal operating entity, contact preferences, current policy information, and option to upload your existing schedule.
@@ -426,7 +584,7 @@
               <label for="trading_name">Trading Name (if different)</label>
               <div class="tooltip-container">
                 <i class="fa-solid fa-circle-question tooltip-icon"></i>
-                <span class="tooltip-text">Any operational 'Trading As' (t/a) names presented to customers.</span>
+                <span class="tooltip-text">Any operational 'Trading As' (t/a) names presented to customers or trading public.</span>
               </div>
             </div>
             <input type="text" id="trading_name" name="trading_name">
@@ -439,7 +597,7 @@
               <label for="contact_person">Key Contact Person <span class="req">*</span></label>
               <div class="tooltip-container">
                 <i class="fa-solid fa-circle-question tooltip-icon"></i>
-                <span class="tooltip-text">Name of person managing insurance decisions or broker inquiries.</span>
+                <span class="tooltip-text">Name of key decision-maker managing insurance decisions or broker inquiries.</span>
               </div>
             </div>
             <input type="text" id="contact_person" name="contact_person" required>
@@ -450,7 +608,7 @@
               <label for="email">Email Address <span class="req">*</span></label>
               <div class="tooltip-container">
                 <i class="fa-solid fa-circle-question tooltip-icon"></i>
-                <span class="tooltip-text">Primary contact email where policy terms, invoices, and schedules are sent.</span>
+                <span class="tooltip-text">Primary contact email address where policy terms, invoices, and schedules are sent.</span>
               </div>
             </div>
             <input type="email" id="email" name="email" required>
@@ -474,7 +632,7 @@
               <label for="current_insurer">Current Insurance Company</label>
               <div class="tooltip-container">
                 <i class="fa-solid fa-circle-question tooltip-icon"></i>
-                <span class="tooltip-text">Name of the existing insurance company holding your active commercial policy (e.g., NZI, Vero, QBE, CGU).</span>
+                <span class="tooltip-text">Name of the existing insurance company holding your active commercial policy (e.g., NZI, Vero, QBE).</span>
               </div>
             </div>
             <input type="text" id="current_insurer" name="current_insurer" placeholder="e.g. NZI / Vero / QBE">
@@ -485,7 +643,7 @@
               <label for="current_brokerage">Current Brokerage Firm</label>
               <div class="tooltip-container">
                 <i class="fa-solid fa-circle-question tooltip-icon"></i>
-                <span class="tooltip-text">Name of the insurance broker or agency currently managing your account (or state 'Direct').</span>
+                <span class="tooltip-text">Name of the insurance broker currently managing your account (or state 'Direct').</span>
               </div>
             </div>
             <input type="text" id="current_brokerage" name="current_brokerage" placeholder="e.g. Current Broker / Direct">
@@ -563,97 +721,238 @@
         </div>
       </fieldset>
 
-      <!-- Section 2: Property & Material Damage -->
-      <fieldset class="fieldset" id="section-md">
+      <!-- Section 2: Property, Stock & Contract Works -->
+      <fieldset class="fieldset" id="section-md" data-step="2">
         <legend>
-          <span class="section-num">2</span><i class="fa-solid fa-building"></i> Property & Material Damage
+          <span class="section-num">2</span><i class="fa-solid fa-building"></i> Property, Plant, Stock & Contract Works
           <label class="section-toggle-wrap">
             <input type="checkbox" name="request_section_md" value="Yes" checked onchange="toggleSection('section-md', this.checked)">
             Request Cover
           </label>
         </legend>
         <div class="section-intro">
-          Evaluates physical property risks, building replacement values, plant, mobile/off-site tools, transit sendings, and dangerous goods.
+          Evaluates physical property risks, building replacement values, plant, stock, security protections, dangerous goods, and ongoing installation contract works.
+        </div>
+
+        <!-- Primary Location #1 -->
+        <div style="background:#FFFFFF; border:1px solid #CBD5E0; padding:18px; border-radius:10px; margin-bottom:16px;">
+          <h4 style="font-size:0.92rem; color:var(--psc-navy); margin-bottom:12px;"><i class="fa-solid fa-location-dot" style="color:var(--psc-cyan);"></i> Primary Risk Location #1</h4>
+
+          <div class="form-group">
+            <div class="label-wrapper">
+              <label for="risk_address">Risk Location Address <span class="req">*</span></label>
+              <div class="tooltip-container">
+                <i class="fa-solid fa-circle-question tooltip-icon"></i>
+                <span class="tooltip-text">Physical street address of workshop, warehouse, or office where main assets are held.</span>
+              </div>
+            </div>
+            <input type="text" id="risk_address" name="risk_address" placeholder="Street Address, Suburb, City">
+          </div>
+
+          <div class="grid-3">
+            <div class="form-group">
+              <div class="label-wrapper">
+                <label for="occupancy">Occupancy / Industry <span class="req">*</span></label>
+                <div class="tooltip-container">
+                  <i class="fa-solid fa-circle-question tooltip-icon"></i>
+                  <span class="tooltip-text">Primary trade activity performed at this physical location.</span>
+                </div>
+              </div>
+              <input type="text" id="occupancy" name="occupancy" placeholder="e.g., Commercial Signage & Manufacturing">
+            </div>
+
+            <div class="form-group">
+              <div class="label-wrapper">
+                <label for="year_built">Year Built / % NBS Rating</label>
+                <div class="tooltip-container">
+                  <i class="fa-solid fa-circle-question tooltip-icon"></i>
+                  <span class="tooltip-text">Approximate construction year and New Building Standard (NBS) seismic percentage if known.</span>
+                </div>
+              </div>
+              <input type="text" id="year_built" name="year_built" placeholder="e.g., 2008 / 80% NBS">
+            </div>
+
+            <div class="form-group">
+              <div class="label-wrapper">
+                <label for="eps_presence">EPS / Sandwich Panel Present?</label>
+                <div class="tooltip-container">
+                  <i class="fa-solid fa-circle-question tooltip-icon"></i>
+                  <span class="tooltip-text">Expanded Polystyrene (EPS) insulated paneling presents elevated combustible fire risk.</span>
+                </div>
+              </div>
+              <select id="eps_presence" name="eps_presence">
+                <option value="No">No EPS Panels</option>
+                <option value="Yes - Under 10%">Yes – Under 10% of walls/roof</option>
+                <option value="Yes - Over 10%">Yes – Over 10% (Specify in notes)</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="grid-3">
+            <div class="form-group">
+              <div class="label-wrapper">
+                <label for="sum_building">Building Sum Insured</label>
+                <div class="tooltip-container">
+                  <i class="fa-solid fa-circle-question tooltip-icon"></i>
+                  <span class="tooltip-text">Full rebuild replacement cost excluding land value (if building is owned or structural cover required).</span>
+                </div>
+              </div>
+              <input type="text" id="sum_building" name="sum_building" placeholder="e.g., $1,500,000">
+            </div>
+
+            <div class="form-group">
+              <div class="label-wrapper">
+                <label for="sum_plant">Plant, Machinery & Equipment</label>
+                <div class="tooltip-container">
+                  <i class="fa-solid fa-circle-question tooltip-icon"></i>
+                  <span class="tooltip-text">If you came to your premises and it had burnt to the ground, then found a new location, how much would it cost to replace plant/equipment including setup costs, signage, computer system setup (excluding stock & motor vehicles) to the point you can trade?</span>
+                </div>
+              </div>
+              <input type="text" id="sum_plant" name="sum_plant" placeholder="e.g., $350,000">
+            </div>
+
+            <div class="form-group">
+              <div class="label-wrapper">
+                <label for="sum_stock">Stock Sum Insured</label>
+                <div class="tooltip-container">
+                  <i class="fa-solid fa-circle-question tooltip-icon"></i>
+                  <span class="tooltip-text">Total replacement cost value of raw materials, finished goods, and stock on site.</span>
+                </div>
+              </div>
+              <input type="text" id="sum_stock" name="sum_stock" placeholder="e.g., $150,000">
+            </div>
+          </div>
+
+          <!-- Location #1 Security & Fire Protection Subsection -->
+          <div style="background:#F8FAFC; border:1px solid #E2E8F0; padding:12px 14px; border-radius:8px; margin-top:12px;">
+            <h5 style="font-size:0.83rem; color:var(--psc-navy); margin-bottom:8px;"><i class="fa-solid fa-shield-cat"></i> Location #1 Security & Fire Systems</h5>
+            <div class="checkbox-group">
+              <label class="checkbox-label"><input type="checkbox" name="loc1_security[]" value="Audible Burglar Alarm"> Audible Burglar Alarm</label>
+              <label class="checkbox-label"><input type="checkbox" name="loc1_security[]" value="Monitored Burglar Alarm"> Monitored Burglar Alarm</label>
+              <label class="checkbox-label"><input type="checkbox" name="loc1_security[]" value="CCTV Security Cameras"> CCTV Cameras</label>
+              <label class="checkbox-label"><input type="checkbox" name="loc1_security[]" value="Monitored Fire Alarm"> Monitored Fire Alarm</label>
+              <label class="checkbox-label"><input type="checkbox" name="loc1_security[]" value="Automatic Fire Sprinklers"> Fire Sprinklers</label>
+            </div>
+          </div>
+        </div>
+
+        <!-- Multi-Location Toggle Checkbox -->
+        <div style="margin-bottom:16px; background:#EDF2F7; padding:12px 16px; border-radius:8px;">
+          <label class="checkbox-label" style="background:transparent; border:none; padding:0; font-weight:700; color:var(--psc-navy);">
+            <input type="checkbox" id="add_second_location_toggle" onchange="toggleSecondLocation(this.checked)">
+            <i class="fa-solid fa-plus-circle" style="color:var(--psc-cyan);"></i> Add Additional Risk Location #2?
+          </label>
+        </div>
+
+        <!-- Secondary Location #2 Question Set (Hidden by Default) -->
+        <div id="second_location_container" style="display:none; background:#F0F4F8; border:1.5px dashed var(--psc-cyan); padding:18px; border-radius:10px; margin-bottom:16px;">
+          <h4 style="font-size:0.95rem; color:var(--psc-navy); margin-bottom:12px;"><i class="fa-solid fa-location-dot" style="color:var(--psc-cyan);"></i> Additional Risk Location #2 Specifications</h4>
+
+          <div class="form-group">
+            <div class="label-wrapper">
+              <label for="risk_address_2">Location #2 Physical Address</label>
+              <div class="tooltip-container">
+                <i class="fa-solid fa-circle-question tooltip-icon"></i>
+                <span class="tooltip-text">Physical address of secondary warehouse, workshop, or branch premises.</span>
+              </div>
+            </div>
+            <input type="text" id="risk_address_2" name="risk_address_2" placeholder="Street Address, Suburb, City" disabled>
+          </div>
+
+          <div class="grid-3">
+            <div class="form-group">
+              <div class="label-wrapper">
+                <label for="occupancy_2">Location #2 Occupancy / Trade</label>
+              </div>
+              <input type="text" id="occupancy_2" name="occupancy_2" placeholder="e.g. Storage Warehouse" disabled>
+            </div>
+
+            <div class="form-group">
+              <div class="label-wrapper">
+                <label for="year_built_2">Location #2 Year Built / % NBS</label>
+              </div>
+              <input type="text" id="year_built_2" name="year_built_2" placeholder="e.g. 2012 / 100% NBS" disabled>
+            </div>
+
+            <div class="form-group">
+              <div class="label-wrapper">
+                <label for="eps_presence_2">Location #2 EPS Panels?</label>
+              </div>
+              <select id="eps_presence_2" name="eps_presence_2" disabled>
+                <option value="No">No EPS Panels</option>
+                <option value="Yes - Under 10%">Yes – Under 10%</option>
+                <option value="Yes - Over 10%">Yes – Over 10%</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="grid-3">
+            <div class="form-group">
+              <div class="label-wrapper">
+                <label for="sum_building_2">Location #2 Building Sum</label>
+              </div>
+              <input type="text" id="sum_building_2" name="sum_building_2" placeholder="e.g. $800,000" disabled>
+            </div>
+
+            <div class="form-group">
+              <div class="label-wrapper">
+                <label for="sum_plant_2">Location #2 Plant & Equipment</label>
+              </div>
+              <input type="text" id="sum_plant_2" name="sum_plant_2" placeholder="e.g. $150,000" disabled>
+            </div>
+
+            <div class="form-group">
+              <div class="label-wrapper">
+                <label for="sum_stock_2">Location #2 Stock Sum</label>
+              </div>
+              <input type="text" id="sum_stock_2" name="sum_stock_2" placeholder="e.g. $75,000" disabled>
+            </div>
+          </div>
+
+          <!-- Location #2 Security & Fire Protection Subsection -->
+          <div style="background:#FFFFFF; border:1px solid #CBD5E0; padding:12px 14px; border-radius:8px; margin-top:12px;">
+            <h5 style="font-size:0.83rem; color:var(--psc-navy); margin-bottom:8px;"><i class="fa-solid fa-shield-cat"></i> Location #2 Security & Fire Systems</h5>
+            <div class="checkbox-group">
+              <label class="checkbox-label"><input type="checkbox" name="loc2_security[]" value="Audible Burglar Alarm" disabled> Audible Burglar Alarm</label>
+              <label class="checkbox-label"><input type="checkbox" name="loc2_security[]" value="Monitored Burglar Alarm" disabled> Monitored Burglar Alarm</label>
+              <label class="checkbox-label"><input type="checkbox" name="loc2_security[]" value="CCTV Security Cameras" disabled> CCTV Cameras</label>
+              <label class="checkbox-label"><input type="checkbox" name="loc2_security[]" value="Monitored Fire Alarm" disabled> Monitored Fire Alarm</label>
+              <label class="checkbox-label"><input type="checkbox" name="loc2_security[]" value="Automatic Fire Sprinklers" disabled> Fire Sprinklers</label>
+            </div>
+          </div>
+
+          <div class="grid-2" style="margin-top:12px;">
+            <div class="form-group">
+              <label for="sum_bi_2">Location #2 Standalone Gross Profit</label>
+              <input type="text" id="sum_bi_2" name="sum_bi_2" placeholder="e.g., $300,000" disabled>
+            </div>
+            <div class="form-group">
+              <label for="aicow_limit_2">Location #2 AICOW Extra Limit</label>
+              <input type="text" id="aicow_limit_2" name="aicow_limit_2" placeholder="e.g., $25,000" disabled>
+            </div>
+          </div>
         </div>
 
         <div class="form-group">
           <div class="label-wrapper">
-            <label for="risk_address">Risk Location Address <span class="req">*</span></label>
+            <label for="stock_consignment">Stock On Consignment?</label>
             <div class="tooltip-container">
               <i class="fa-solid fa-circle-question tooltip-icon"></i>
-              <span class="tooltip-text">Physical street address of workshop, warehouse, or office where main assets are held.</span>
+              <span class="tooltip-text">Specify if you hold stock on site owned by third-party suppliers, or if you supply stock on consignment to customers.</span>
             </div>
           </div>
-          <input type="text" id="risk_address" name="risk_address" placeholder="Street Address, Suburb, City">
-        </div>
-
-        <div class="grid-3">
-          <div class="form-group">
-            <div class="label-wrapper">
-              <label for="occupancy">Occupancy / Industry <span class="req">*</span></label>
-              <div class="tooltip-container">
-                <i class="fa-solid fa-circle-question tooltip-icon"></i>
-                <span class="tooltip-text">Primary trade activity performed at this physical location.</span>
-              </div>
-            </div>
-            <input type="text" id="occupancy" name="occupancy" placeholder="e.g., Signage & Manufacturing">
-          </div>
-
-          <div class="form-group">
-            <div class="label-wrapper">
-              <label for="year_built">Year Built / % NBS Rating</label>
-              <div class="tooltip-container">
-                <i class="fa-solid fa-circle-question tooltip-icon"></i>
-                <span class="tooltip-text">Approximate construction year and New Building Standard (NBS) seismic percentage if known.</span>
-              </div>
-            </div>
-            <input type="text" id="year_built" name="year_built" placeholder="e.g., 2008 / 80% NBS">
-          </div>
-
-          <div class="form-group">
-            <div class="label-wrapper">
-              <label for="eps_presence">EPS / Sandwich Panel Present?</label>
-              <div class="tooltip-container">
-                <i class="fa-solid fa-circle-question tooltip-icon"></i>
-                <span class="tooltip-text">Expanded Polystyrene (EPS) insulated paneling presents elevated combustible fire risk.</span>
-              </div>
-            </div>
-            <select id="eps_presence" name="eps_presence">
-              <option value="No">No EPS Panels</option>
-              <option value="Yes - Under 10%">Yes – Under 10% of walls/roof</option>
-              <option value="Yes - Over 10%">Yes – Over 10% (Specify in notes)</option>
-            </select>
-          </div>
+          <select id="stock_consignment" name="stock_consignment">
+            <option value="None" selected>None</option>
+            <option value="Held on behalf of suppliers">Held on behalf of suppliers</option>
+            <option value="Have supplied to customers">Have supplied stock to customers</option>
+            <option value="Both held and supplied">Both held on behalf and supplied</option>
+          </select>
         </div>
 
         <div class="grid-2">
           <div class="form-group">
             <div class="label-wrapper">
-              <label for="sum_building">Building Sum Insured ($NZD)</label>
-              <div class="tooltip-container">
-                <i class="fa-solid fa-circle-question tooltip-icon"></i>
-                <span class="tooltip-text">Full rebuild replacement cost excluding land value (if building is owned or structural cover required).</span>
-              </div>
-            </div>
-            <input type="text" id="sum_building" name="sum_building" placeholder="e.g., $1,500,000">
-          </div>
-
-          <div class="form-group">
-            <div class="label-wrapper">
-              <label for="sum_contents">Plant, Shop Stock & On-Site Assets ($NZD)</label>
-              <div class="tooltip-container">
-                <i class="fa-solid fa-circle-question tooltip-icon"></i>
-                <span class="tooltip-text">Total replacement value of machinery, stock, raw materials, office equipment kept on-site.</span>
-              </div>
-            </div>
-            <input type="text" id="sum_contents" name="sum_contents" placeholder="e.g., $350,000">
-          </div>
-        </div>
-
-        <div class="grid-2">
-          <div class="form-group">
-            <div class="label-wrapper">
-              <label for="offsite_tools_val">Mobile Tools / Equipment Kept Off-Site Full-Time ($NZD)</label>
+              <label for="offsite_tools_val">Mobile Tools / Equipment Kept Off-Site</label>
               <div class="tooltip-container">
                 <i class="fa-solid fa-circle-question tooltip-icon"></i>
                 <span class="tooltip-text">Total replacement value of tools, portable equipment, diagnostic units, or gear kept in vehicles or remote sites that do NOT return to base overnight.</span>
@@ -664,7 +963,7 @@
 
           <div class="form-group">
             <div class="label-wrapper">
-              <label for="employee_tools_limit">Employee Own Tools Cover Required & Limit ($NZD)</label>
+              <label for="employee_tools_limit">Employee Own Tools Cover Limit</label>
               <div class="tooltip-container">
                 <i class="fa-solid fa-circle-question tooltip-icon"></i>
                 <span class="tooltip-text">Covers personal tools owned by staff while used for business duties or kept on premises/in work vehicles. State required limit per worker or total.</span>
@@ -674,7 +973,7 @@
           </div>
         </div>
 
-        <div class="grid-3">
+        <div class="grid-2">
           <div class="form-group">
             <div class="label-wrapper">
               <label for="transit_over_20k">Inland Transits Over $20,000?</label>
@@ -692,55 +991,65 @@
 
           <div class="form-group">
             <div class="label-wrapper">
-              <label for="import_export_exposure">Import / Export Exposure?</label>
+              <label for="dangerous_goods_status">Dangerous Goods (DG) Licensing / Quantities</label>
               <div class="tooltip-container">
                 <i class="fa-solid fa-circle-question tooltip-icon"></i>
-                <span class="tooltip-text">Specify if you import materials directly from overseas suppliers (FOB/CIF) or export finished goods overseas.</span>
+                <span class="tooltip-text">Disclose if you hold formal Dangerous Goods certification/licensing or store regulated quantities of solvents, flammables, or gas cylinders on site.</span>
               </div>
             </div>
-            <select id="import_export_exposure" name="import_export_exposure">
-              <option value="None">None – All local NZ suppliers</option>
-              <option value="Imports directly">Yes – Direct overseas imports</option>
-              <option value="Exports finished products">Yes – Exporting goods overseas</option>
-              <option value="Both Imports and Exports">Both Imports & Exports</option>
-            </select>
-          </div>
-
-          <div class="form-group">
-            <div class="label-wrapper">
-              <label for="dangerous_goods">Hazardous / Dangerous Goods (DG)?</label>
-              <div class="tooltip-container">
-                <i class="fa-solid fa-circle-question tooltip-icon"></i>
-                <span class="tooltip-text">Disclose bulk storage of flammable liquids, solvents, paint thinners, LPG cylinders, or chemical stores.</span>
-              </div>
-            </div>
-            <select id="dangerous_goods" name="dangerous_goods">
-              <option value="Standard minor trade quantities">No – Minor trade quantities only</option>
-              <option value="Flammables/Solvents in DG cabinets">Yes – Solvents/Paints in DG cabinets</option>
-              <option value="LPG/Gas Bulk Storage">Yes – LPG Cylinder Bulk Storage</option>
+            <select id="dangerous_goods_status" name="dangerous_goods_status">
+              <option value="No DG stored or minor trade amounts">No DG stored or minor trade amounts</option>
+              <option value="Holds DG License / Regulated Quantities">Holds DG License / Regulated Quantities on site</option>
             </select>
           </div>
         </div>
 
-        <div class="form-group">
-          <div class="label-wrapper">
-            <label for="hot_work">Hot Work / Hazardous Processes On-Site?</label>
-            <div class="tooltip-container">
-              <i class="fa-solid fa-circle-question tooltip-icon"></i>
-              <span class="tooltip-text">Disclose thermal welding, metal cutting, or spray painting using flammable solvents.</span>
+        <!-- Contract Works Subsection -->
+        <div class="sub-panel">
+          <div class="sub-panel-title"><i class="fa-solid fa-helmet-safety"></i> Contract Works / Installation Coverage (CWI Risk)</div>
+          <p style="font-size:0.79rem; color:#4A5568; margin-bottom:12px; line-height:1.45;">
+            <strong>Important Note:</strong> Only include turnover for signs or goods you still own while installing, along with your highest single job value.
+          </p>
+          
+          <div class="grid-3">
+            <div class="form-group">
+              <div class="label-wrapper">
+                <label for="cw_turnover_past">Past Period Installation Turnover</label>
+                <div class="tooltip-container">
+                  <i class="fa-solid fa-circle-question tooltip-icon"></i>
+                  <span class="tooltip-text">Turnover derived from physical installation work for the previous 12-month period where title remained with you during setup.</span>
+                </div>
+              </div>
+              <input type="text" id="cw_turnover_past" name="cw_turnover_past" placeholder="e.g., $600,000">
+            </div>
+
+            <div class="form-group">
+              <div class="label-wrapper">
+                <label for="cw_turnover_next">Upcoming Period Installation Turnover</label>
+                <div class="tooltip-container">
+                  <i class="fa-solid fa-circle-question tooltip-icon"></i>
+                  <span class="tooltip-text">Projected turnover derived from physical installation work for the next 12 months.</span>
+                </div>
+              </div>
+              <input type="text" id="cw_turnover_next" name="cw_turnover_next" placeholder="e.g., $750,000">
+            </div>
+
+            <div class="form-group">
+              <div class="label-wrapper">
+                <label for="cw_highest_item_value">Highest Single Job Value</label>
+                <div class="tooltip-container">
+                  <i class="fa-solid fa-circle-question tooltip-icon"></i>
+                  <span class="tooltip-text">Maximum potential claim amount relating to product owned and being installed on a single job site.</span>
+                </div>
+              </div>
+              <input type="text" id="cw_highest_item_value" name="cw_highest_item_value" placeholder="e.g., $120,000">
             </div>
           </div>
-          <select id="hot_work" name="hot_work">
-            <option value="None">None</option>
-            <option value="Welding/Cutting">Welding / Thermal Cutting</option>
-            <option value="Spray Painting">Spray Painting / Solvent Spraying</option>
-            <option value="Both">Both Welding & Spray Painting</option>
-          </select>
         </div>
       </fieldset>
 
       <!-- Section 3: Business Interruption -->
-      <fieldset class="fieldset" id="section-bi">
+      <fieldset class="fieldset" id="section-bi" data-step="3">
         <legend>
           <span class="section-num">3</span><i class="fa-solid fa-chart-line"></i> Business Interruption
           <label class="section-toggle-wrap">
@@ -749,7 +1058,7 @@
           </label>
         </legend>
         <div class="section-intro">
-          Protects ongoing financial viability by continuing revenue, fixed overheads, and staff wages following an insured physical loss or property damage.
+          Protects ongoing financial viability by continuing gross profit and covering emergency operational expenses following insured property damage.
         </div>
 
         <div class="grid-2">
@@ -758,12 +1067,11 @@
               <label for="bi_cover_type">Basis of Cover Required</label>
               <div class="tooltip-container">
                 <i class="fa-solid fa-circle-question tooltip-icon"></i>
-                <span class="tooltip-text">Gross Profit covers revenue minus variable expenses; Gross Revenue covers total trading turnover.</span>
+                <span class="tooltip-text">Gross Profit covers trading revenue minus variable costs; AICOW covers emergency operational relocation costs.</span>
               </div>
             </div>
             <select id="bi_cover_type" name="bi_cover_type">
-              <option value="Gross Profit">Insurable Gross Profit</option>
-              <option value="Gross Revenue">Gross Revenue / Income</option>
+              <option value="Gross Profit" selected>Insurable Gross Profit</option>
               <option value="Gross Rentals">Gross Rentals</option>
               <option value="AICOW Only">Additional Increase in Cost of Working Only</option>
             </select>
@@ -774,14 +1082,13 @@
               <label for="indemnity_period">Indemnity Period <span class="req">*</span></label>
               <div class="tooltip-container">
                 <i class="fa-solid fa-circle-question tooltip-icon"></i>
-                <span class="tooltip-text">Maximum timeframe underwriter pays for lost turnover while rebuilding, replacing equipment, and recovering market share.</span>
+                <span class="tooltip-text">Maximum timeframe underwriter pays for lost trading turnover while rebuilding or replacing equipment. Defaulted to 12 Months (24 Months recommended for Flood and seismic zones).</span>
               </div>
             </div>
             <select id="indemnity_period" name="indemnity_period">
-              <option value="" selected disabled>-- Select Indemnity Period --</option>
-              <option value="12 Months">12 Months</option>
+              <option value="12 Months" selected>12 Months (Standard Default)</option>
               <option value="18 Months">18 Months</option>
-              <option value="24 Months">24 Months (Recommended for NZ rebuilds)</option>
+              <option value="24 Months">24 Months (Recommended for Flood and seismic zones)</option>
               <option value="36 Months">36 Months</option>
             </select>
           </div>
@@ -790,42 +1097,42 @@
         <div class="grid-2">
           <div class="form-group">
             <div class="label-wrapper">
-              <label for="sum_bi">Business Interruption Sum Insured ($NZD)</label>
+              <label for="sum_bi">Insurable Gross Profit Sum Insured</label>
               <div class="tooltip-container">
                 <i class="fa-solid fa-circle-question tooltip-icon"></i>
-                <span class="tooltip-text">Annual financial figure multiplied by ratio of indemnity period (e.g. 24 months = 2x annual Gross Profit).</span>
+                <span class="tooltip-text">Annual Gross Profit multiplied by indemnity ratio (e.g. 12 months = 1x annual Gross Profit).</span>
               </div>
             </div>
-            <input type="text" id="sum_bi" name="sum_bi" placeholder="e.g., $1,200,000">
+            <input type="text" id="sum_bi" name="sum_bi" placeholder="e.g., $800,000">
           </div>
 
           <div class="form-group">
             <div class="label-wrapper">
-              <label for="aicow_limit">AICOW Limit ($NZD)</label>
+              <label for="aicow_limit">AICOW Limit</label>
               <div class="tooltip-container">
                 <i class="fa-solid fa-circle-question tooltip-icon"></i>
-                <span class="tooltip-text">Additional Increase in Cost of Working: Emergency funds to rent temporary premises or equipment following a loss.</span>
+                <span class="tooltip-text">Additional Increase in Cost of Working: Emergency funds to rent temporary premises or machinery following a fire or loss.</span>
               </div>
             </div>
-            <input type="text" id="aicow_limit" name="aicow_limit" placeholder="e.g., $100,000">
+            <input type="text" id="aicow_limit" name="aicow_limit" placeholder="$50,000">
           </div>
         </div>
       </fieldset>
 
       <!-- Section 4: Public, Statutory & Employers Liability -->
-      <fieldset class="fieldset" id="section-liability">
+      <fieldset class="fieldset" id="section-liability" data-step="4">
         <legend>
           <span class="section-num">4</span><i class="fa-solid fa-shield-halved"></i> Liability & Professional Lines
           <span class="badge-mandatory">Mandatory Baseline</span>
         </legend>
         <div class="section-intro">
-          Covers legal liability for accidental third-party personal injury, property damage, Statutory fines, Employers Liability, or professional design errors.
+          Covers legal liability for accidental third-party personal injury, property damage, Statutory fines, Employers Liability, or design advice errors.
         </div>
 
         <div class="grid-2">
           <div class="form-group">
             <div class="label-wrapper">
-              <label for="pl_limit">Public Liability Limit <span class="req">*</span></label>
+              <label for="pl_limit">Public Liability Limit (GL) <span class="req">*</span></label>
               <div class="tooltip-container">
                 <i class="fa-solid fa-circle-question tooltip-icon"></i>
                 <span class="tooltip-text">Maximum indemnity paid per third-party property damage or personal injury claim.</span>
@@ -837,17 +1144,36 @@
               <option value="$10,000,000">$10,000,000</option>
               <option value="$20,000,000">$20,000,000+</option>
             </select>
+            <div class="cover-desc">GL: Protects against third-party personal injury or property damage legal claims caused by operational activities.</div>
           </div>
 
           <div class="form-group">
             <div class="label-wrapper">
-              <label for="total_turnover">Total Estimated Annual Turnover ($NZD) <span class="req">*</span></label>
+              <label for="total_turnover">Total Estimated Annual Turnover <span class="req">*</span></label>
               <div class="tooltip-container">
                 <i class="fa-solid fa-circle-question tooltip-icon"></i>
-                <span class="tooltip-text">Projected gross annual revenue for the upcoming 12-month policy period.</span>
+                <span class="tooltip-text">Projected gross annual turnover for the upcoming 12-month policy period.</span>
               </div>
             </div>
-            <input type="text" id="total_turnover" name="total_turnover" placeholder="e.g., $2,500,000" required>
+            <input type="text" id="total_turnover" name="total_turnover" placeholder="$1,300,000" required>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Employee Breakdown Counts:</label>
+          <div class="grid-3">
+            <div class="form-group">
+              <label for="emp_directors">Working Directors</label>
+              <input type="number" id="emp_directors" name="emp_directors" placeholder="e.g., 2" min="0">
+            </div>
+            <div class="form-group">
+              <label for="emp_fulltime">Full-Time Staff</label>
+              <input type="number" id="emp_fulltime" name="emp_fulltime" placeholder="e.g., 6" min="0">
+            </div>
+            <div class="form-group">
+              <label for="emp_parttime">Part-Time Staff</label>
+              <input type="number" id="emp_parttime" name="emp_parttime" placeholder="e.g., 2" min="0">
+            </div>
           </div>
         </div>
 
@@ -862,15 +1188,15 @@
           <div class="grid-3">
             <div class="form-group">
               <label for="turnover_installation">Physical On-Site Installation</label>
-              <input type="text" id="turnover_installation" name="turnover_installation" placeholder="e.g., 60%">
+              <input type="text" id="turnover_installation" name="turnover_installation" placeholder="Default: 15%">
             </div>
             <div class="form-group">
               <label for="turnover_design">Design & Consultancy</label>
-              <input type="text" id="turnover_design" name="turnover_design" placeholder="e.g., 25%">
+              <input type="text" id="turnover_design" name="turnover_design" placeholder="Default: 7.5%">
             </div>
             <div class="form-group">
-              <label for="turnover_supply">Supply & Manufacturing Only</label>
-              <input type="text" id="turnover_supply" name="turnover_supply" placeholder="e.g., 15%">
+              <label for="turnover_supply">Supply & Production of Goods</label>
+              <input type="text" id="turnover_supply" name="turnover_supply" placeholder="Remainder: 77.5%">
             </div>
           </div>
         </div>
@@ -878,7 +1204,7 @@
         <div class="grid-3">
           <div class="form-group">
             <div class="label-wrapper">
-              <label for="pi_limit">Professional Indemnity (Design Risk)</label>
+              <label for="pi_limit">Professional Indemnity (PI / Design)</label>
               <div class="tooltip-container">
                 <i class="fa-solid fa-circle-question tooltip-icon"></i>
                 <span class="tooltip-text">Covers financial loss or injury resulting from flawed design advice, sign drafting, or engineering recommendations.</span>
@@ -890,121 +1216,193 @@
               <option value="$2,000,000">$2,000,000 Limit</option>
               <option value="$5,000,000">$5,000,000 Limit</option>
             </select>
+            <div class="cover-desc">PI: Covers financial loss caused by errors in design advice, signage specs, or drafting.</div>
           </div>
 
           <div class="form-group">
             <div class="label-wrapper">
-              <label for="ccc_limit">Care, Custody & Control Sub-limit</label>
+              <label for="ccc_limit">Maximum value of third-party goods held excluding motor vehicles</label>
               <div class="tooltip-container">
                 <i class="fa-solid fa-circle-question tooltip-icon"></i>
-                <span class="tooltip-text">Covers damage to customer property (e.g. client vehicles or third-party structures) while in your physical control.</span>
+                <span class="tooltip-text">Maximum value of customer or third-party property (excluding motor vehicles) held on your premises or under your care for servicing/installation.</span>
               </div>
             </div>
             <select id="ccc_limit" name="ccc_limit">
-              <option value="$100,000" selected>$100,000</option>
-              <option value="$250,000">$250,000</option>
-              <option value="$500,000">$500,000</option>
+              <option value="$100,000" selected>$100,000 Sub-limit</option>
+              <option value="$250,000">$250,000 Sub-limit</option>
+              <option value="$500,000">$500,000 Sub-limit</option>
             </select>
           </div>
 
           <div class="form-group">
             <div class="label-wrapper">
-              <label for="stat_emp_limit">Statutory & Employers Liability</label>
+              <label for="stat_emp_limit">Statutory (SL) & Employers Liability (EL)</label>
               <div class="tooltip-container">
                 <i class="fa-solid fa-circle-question tooltip-icon"></i>
-                <span class="tooltip-text">Covers legal defense costs and fines under statutes like Health and Safety at Work Act, plus employee injury claims outside ACC.</span>
+                <span class="tooltip-text">Covers defense costs and statutory fines under NZ laws, plus employee personal injury claims outside ACC.</span>
               </div>
             </div>
             <select id="stat_emp_limit" name="stat_emp_limit">
               <option value="$1,000,000" selected>$1,000,000 Limit</option>
               <option value="$2,000,000">$2,000,000 Limit</option>
             </select>
+            <div class="cover-desc">SL: Defends regulatory breaches & statutory fines (e.g., HSWA). EL: Covers employee injury claims outside ACC cover.</div>
           </div>
         </div>
 
-        <div class="grid-3">
-          <div class="form-group">
-            <div class="label-wrapper">
-              <label for="height_work">Work at Heights / Scaffolding</label>
-              <div class="tooltip-container">
-                <i class="fa-solid fa-circle-question tooltip-icon"></i>
-                <span class="tooltip-text">Discloses elevated risk levels involving cherry pickers, scissor lifts, abseiling, or high-rise building installation.</span>
-              </div>
+        <div class="form-group">
+          <div class="label-wrapper">
+            <label for="subcontractors">Subcontractor Usage & Verification</label>
+            <div class="tooltip-container">
+              <i class="fa-solid fa-circle-question tooltip-icon"></i>
+              <span class="tooltip-text">Vicarious liability coverage extends to defend you if a contractor causes damage on your job. Insurers maintain rights to recover costs directly from negligent contractors, so confirming contractors hold active liability cover is critical.</span>
             </div>
-            <select id="height_work" name="height_work">
-              <option value="Ground level only">Ground level only</option>
-              <option value="Under 10m">Under 10m (Ladders / Scissor Lifts)</option>
-              <option value="Over 10m">Over 10m (Specialist rigs / Abseiling)</option>
-            </select>
           </div>
+          <select id="subcontractors" name="subcontractors">
+            <option value="None">No subcontractors used</option>
+            <option value="Hold own liability insurance and checked" selected>Hold own liability insurance and checked</option>
+            <option value="Subcontractors used but insurance not checked">Subcontractors used but insurance not checked</option>
+          </select>
+        </div>
 
-          <div class="form-group">
-            <div class="label-wrapper">
-              <label for="subcontractors">Subcontractor Usage</label>
-              <div class="tooltip-container">
-                <i class="fa-solid fa-circle-question tooltip-icon"></i>
-                <span class="tooltip-text">Confirms whether external contractors perform work on your behalf and if their liability policies are checked.</span>
-              </div>
+        <div class="form-group">
+          <div class="label-wrapper">
+            <label>Product Export Destinations (Select All That Apply):</label>
+            <div class="tooltip-container">
+              <i class="fa-solid fa-circle-question tooltip-icon"></i>
+              <span class="tooltip-text">Select all geographical destinations where manufactured goods or products are shipped or exported.</span>
             </div>
-            <select id="subcontractors" name="subcontractors">
-              <option value="None">No subcontractors used</option>
-              <option value="Verified PL">Yes – Subcontractors carry $5M+ PL</option>
-              <option value="Unverified">Yes – Insurance not checked</option>
-            </select>
           </div>
-
-          <div class="form-group">
-            <div class="label-wrapper">
-              <label for="usa_exports">USA / Canada Work or Exports?</label>
-              <div class="tooltip-container">
-                <i class="fa-solid fa-circle-question tooltip-icon"></i>
-                <span class="tooltip-text">Public / Products Liability in North America carries significantly higher litigation exposure.</span>
-              </div>
-            </div>
-            <select id="usa_exports" name="usa_exports">
-              <option value="No">No North American exports</option>
-              <option value="Yes - Products exported to USA/Canada">Yes – Exports to USA/Canada</option>
-            </select>
+          <div class="checkbox-group">
+            <label class="checkbox-label"><input type="checkbox" name="export_destinations[]" value="None - Local NZ Only" checked> Local New Zealand Sales Only</label>
+            <label class="checkbox-label"><input type="checkbox" name="export_destinations[]" value="Australia"> Australia</label>
+            <label class="checkbox-label"><input type="checkbox" name="export_destinations[]" value="South Pacific"> South Pacific Islands</label>
+            <label class="checkbox-label"><input type="checkbox" name="export_destinations[]" value="USA / Canada"> USA / Canada</label>
+            <label class="checkbox-label"><input type="checkbox" name="export_destinations[]" value="Other International"> Other International Destinations</label>
           </div>
         </div>
       </fieldset>
 
       <!-- Section 5: Commercial Motor Fleet -->
-      <fieldset class="fieldset" id="section-motor">
+      <fieldset class="fieldset" id="section-motor" data-step="5">
         <legend>
-          <span class="section-num">5</span><i class="fa-solid fa-truck-front"></i> Commercial Motor Fleet
+          <span class="section-num">5</span><i class="fa-solid fa-truck-front"></i> Commercial Motor Fleet & Take-Home Risk
           <label class="section-toggle-wrap">
             <input type="checkbox" name="request_section_motor" value="Yes" checked onchange="toggleSection('section-motor', this.checked)">
             Request Cover
           </label>
         </legend>
         <div class="section-intro">
-          Schedule vehicle registration plate numbers and market values (excl. GST) for up to 15 commercial vehicles, trucks, utes, or equipment trailers.
+          Schedule commercial motor vehicles, registration details, sums insured, and off-site overnight storage practices.
         </div>
 
-        <div class="motor-grid-container">
-          <div class="motor-row"><div class="num">#1</div><div><input type="text" name="rego_1" placeholder="Rego (e.g. ABC123)"></div><div><input type="text" name="val_1" placeholder="Market Value Excl. GST (e.g. $45,000)"></div></div>
-          <div class="motor-row"><div class="num">#2</div><div><input type="text" name="rego_2" placeholder="Rego (e.g. XYZ789)"></div><div><input type="text" name="val_2" placeholder="Market Value Excl. GST"></div></div>
-          <div class="motor-row"><div class="num">#3</div><div><input type="text" name="rego_3" placeholder="Rego plate"></div><div><input type="text" name="val_3" placeholder="Market Value Excl. GST"></div></div>
-          <div class="motor-row"><div class="num">#4</div><div><input type="text" name="rego_4" placeholder="Rego plate"></div><div><input type="text" name="val_4" placeholder="Market Value Excl. GST"></div></div>
-          <div class="motor-row"><div class="num">#5</div><div><input type="text" name="rego_5" placeholder="Rego plate"></div><div><input type="text" name="val_5" placeholder="Market Value Excl. GST"></div></div>
-          <div class="motor-row"><div class="num">#6</div><div><input type="text" name="rego_6" placeholder="Rego plate"></div><div><input type="text" name="val_6" placeholder="Market Value Excl. GST"></div></div>
-          <div class="motor-row"><div class="num">#7</div><div><input type="text" name="rego_7" placeholder="Rego plate"></div><div><input type="text" name="val_7" placeholder="Market Value Excl. GST"></div></div>
-          <div class="motor-row"><div class="num">#8</div><div><input type="text" name="rego_8" placeholder="Rego plate"></div><div><input type="text" name="val_8" placeholder="Market Value Excl. GST"></div></div>
-          <div class="motor-row"><div class="num">#9</div><div><input type="text" name="rego_9" placeholder="Rego plate"></div><div><input type="text" name="val_9" placeholder="Market Value Excl. GST"></div></div>
-          <div class="motor-row"><div class="num">#10</div><div><input type="text" name="rego_10" placeholder="Rego plate"></div><div><input type="text" name="val_10" placeholder="Market Value Excl. GST"></div></div>
-          <div class="motor-row"><div class="num">#11</div><div><input type="text" name="rego_11" placeholder="Rego plate"></div><div><input type="text" name="val_11" placeholder="Market Value Excl. GST"></div></div>
-          <div class="motor-row"><div class="num">#12</div><div><input type="text" name="rego_12" placeholder="Rego plate"></div><div><input type="text" name="val_12" placeholder="Market Value Excl. GST"></div></div>
-          <div class="motor-row"><div class="num">#13</div><div><input type="text" name="rego_13" placeholder="Rego plate"></div><div><input type="text" name="val_13" placeholder="Market Value Excl. GST"></div></div>
-          <div class="motor-row"><div class="num">#14</div><div><input type="text" name="rego_14" placeholder="Rego plate"></div><div><input type="text" name="val_14" placeholder="Market Value Excl. GST"></div></div>
-          <div class="motor-row"><div class="num">#15</div><div><input type="text" name="rego_15" placeholder="Rego plate"></div><div><input type="text" name="val_15" placeholder="Market Value Excl. GST"></div></div>
+        <!-- Dynamic Motor Fleet Line Item List -->
+        <div class="form-group">
+          <div class="label-wrapper">
+            <label>Vehicle Fleet Schedule (Up to 15 Vehicles):</label>
+            <div class="tooltip-container">
+              <i class="fa-solid fa-circle-question tooltip-icon"></i>
+              <span class="tooltip-text">Enter Year, Make & Model, Registration Plate, and Market Value (Excl. GST). Check 'Add Another Vehicle' to append additional lines.</span>
+            </div>
+          </div>
+
+          <div id="vehicle-fleet-container">
+            <!-- Vehicle Line #1 -->
+            <div class="vehicle-row" id="vehicle_row_1">
+              <div class="vehicle-grid">
+                <div class="vehicle-num">#1</div>
+                <div><input type="text" name="veh_year_1" placeholder="Year"></div>
+                <div><input type="text" name="veh_model_1" placeholder="Make & Model (e.g. Ford Ranger)"></div>
+                <div><input type="text" name="veh_rego_1" placeholder="Rego / Plate"></div>
+                <div><input type="text" name="veh_value_1" placeholder="Sum Insured Excl. GST"></div>
+              </div>
+              <div class="vehicle-add-toggle">
+                <label class="checkbox-label" style="background:transparent; border:none; padding:0; font-weight:600; color:var(--psc-navy);">
+                  <input type="checkbox" id="veh_toggle_1" onchange="toggleVehicleRow(1, this.checked)">
+                  <i class="fa-solid fa-plus-circle" style="color:var(--psc-cyan);"></i> Add another vehicle
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Take-Home Vehicles & Overnight Tools Question Block -->
+        <div class="sub-panel">
+          <div class="sub-panel-title"><i class="fa-solid fa-house-user"></i> Overnight Storage & Take-Home Vehicles</div>
+          
+          <div class="form-group">
+            <div class="label-wrapper">
+              <label for="take_home_status">Do employees take vehicles and/or tools home overnight? <span class="req">*</span></label>
+              <div class="tooltip-container">
+                <i class="fa-solid fa-circle-question tooltip-icon"></i>
+                <span class="tooltip-text">Indicate whether staff park business vehicles or transport toolkits to residential home addresses overnight.</span>
+              </div>
+            </div>
+            <select id="take_home_status" name="take_home_status" onchange="toggleTakeHomeDetails(this.value)">
+              <option value="No" selected>No – All vehicles & tools remain at business premises overnight</option>
+              <option value="Yes - All staff">Yes – Employees routinely take vehicles/tools home</option>
+              <option value="Mix - Certain staff only">Mix – Selected staff/vehicles taken home</option>
+            </select>
+          </div>
+
+          <!-- Dynamic Details Block -->
+          <div id="take_home_details_wrap" style="display:none; background:#EDF2F7; border-left:3px solid var(--psc-cyan); padding:14px; border-radius:6px; margin-top:12px;">
+            <div class="grid-3">
+              <div class="form-group">
+                <label for="take_home_count">Total Take-Home Vehicles Count</label>
+                <input type="number" id="take_home_count" name="take_home_count" placeholder="e.g., 4 vehicles" min="0" disabled>
+              </div>
+              <div class="form-group">
+                <label for="take_home_avg_val">Average Value per Vehicle</label>
+                <input type="text" id="take_home_avg_val" name="take_home_avg_val" placeholder="e.g., $35,000" disabled>
+              </div>
+              <div class="form-group">
+                <label for="take_home_max_val">Max Vehicle Value Taken Home</label>
+                <input type="text" id="take_home_max_val" name="take_home_max_val" placeholder="e.g., $65,000" disabled>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <div class="label-wrapper">
+            <label for="care_motor_value">Value of customer vehicles held / stored</label>
+            <div class="tooltip-container">
+              <i class="fa-solid fa-circle-question tooltip-icon"></i>
+              <span class="tooltip-text">Maximum value of customer vehicles or client fleet items stored on your premises or driven for work/installation duties.</span>
+            </div>
+          </div>
+          <input type="text" id="care_motor_value" name="care_motor_value" placeholder="e.g., $80,000 or 'None'">
+        </div>
+
+        <!-- Loss of Use Subsection -->
+        <div class="sub-panel">
+          <div class="sub-panel-title"><i class="fa-solid fa-car-side"></i> Vehicle Loss of Use Extension</div>
+          <p style="font-size:0.79rem; color:#4A5568; margin-bottom:12px; line-height:1.45;">
+            <strong>Understanding Loss of Use:</strong> Reimburses hire car or replacement commercial rental costs incurred while a vehicle is undergoing accident repairs. Note: Most standard policies include a 7-day excess window before cover starts. Because repairers often provide basic courtesy cars, this option is less popular for general vehicles, but recommended for essential work vehicles/trucks your trade cannot operate without (provided replacement hire vehicles are available).
+          </p>
+          
+          <div class="form-group">
+            <div class="label-wrapper">
+              <label for="motor_loss_of_use">Include Loss of Use / Hire Vehicle Cover?</label>
+              <div class="tooltip-container">
+                <i class="fa-solid fa-circle-question tooltip-icon"></i>
+                <span class="tooltip-text">Select if you want replacement rental vehicle reimbursement added for key trade vehicles following an accident.</span>
+              </div>
+            </div>
+            <select id="motor_loss_of_use" name="motor_loss_of_use">
+              <option value="No - Standard policy cover adequate">No – Standard policy cover adequate (rely on courtesy cars or surplus vehicles)</option>
+              <option value="Yes - Essential key trade vehicles only">Yes – Include Loss of Use extension for essential key vehicles</option>
+              <option value="Yes - Entire fleet">Yes – Include Loss of Use across entire fleet</option>
+            </select>
+          </div>
         </div>
       </fieldset>
 
       <!-- Section 6: Cyber Risk & Cyber Liability -->
-      <fieldset class="fieldset" id="section-cyber">
+      <fieldset class="fieldset" id="section-cyber" data-step="6">
         <legend>
-          <span class="section-num">6</span><i class="fa-solid fa-lock"></i> Cyber Risk & Security
+          <span class="section-num">6</span><i class="fa-solid fa-lock"></i> Cyber Risk & IT Security
           <label class="section-toggle-wrap">
             <input type="checkbox" name="request_section_cyber" value="Yes" checked onchange="toggleSection('section-cyber', this.checked)">
             Request Cover
@@ -1023,121 +1421,154 @@
                 <span class="tooltip-text">Maximum coverage per policy year for incident response, extortion payments, and legal liability.</span>
               </div>
             </div>
-            <select id="cyber_limit" name="cyber_limit">
-              <option value="Not Required">Not Required</option>
-              <option value="$250,000">$250,000 Limit</option>
-              <option value="$500,000">$500,000 Limit</option>
-              <option value="$1,000,000" selected>$1,000,000 Limit (Standard)</option>
-              <option value="$2,000,000+">$2,000,000+ Limit</option>
+            <input type="text" id="cyber_limit" name="cyber_limit" placeholder="$500,000">
+          </div>
+
+          <div class="form-group">
+            <div class="label-wrapper">
+              <label for="cyber_mfa_status">Multi-Factor Authentication (MFA / 2FA) Active?</label>
+              <div class="tooltip-container">
+                <i class="fa-solid fa-circle-question tooltip-icon"></i>
+                <span class="tooltip-text">Confirms whether 2-Step verification is required on email logins, remote cloud systems, and financial portals.</span>
+              </div>
+            </div>
+            <select id="cyber_mfa_status" name="cyber_mfa_status">
+              <option value="Yes on all accounts" selected>Yes on all accounts</option>
+              <option value="No">No</option>
+              <option value="Don't know">Don't know</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="grid-2">
+          <div class="form-group">
+            <div class="label-wrapper">
+              <label for="cyber_dual_signoff">Dual Controls / Dual Sign-off on Outgoing Payments > $5,000?</label>
+              <div class="tooltip-container">
+                <i class="fa-solid fa-circle-question tooltip-icon"></i>
+                <span class="tooltip-text">Confirms if your business requires two independent staff approvals or phone call verification before sending payments over $5,000.</span>
+              </div>
+            </div>
+            <select id="cyber_dual_signoff" name="cyber_dual_signoff">
+              <option value="Yes - Required on payments over $5,000" selected>Yes – Dual controls active on payments over $5,000</option>
+              <option value="No">No single authorization used</option>
             </select>
           </div>
 
           <div class="form-group">
             <div class="label-wrapper">
-              <label for="social_engineering">Social Engineering / Wire Fraud Cover?</label>
+              <label for="cyber_backup_routine">Data Backup Practices</label>
               <div class="tooltip-container">
                 <i class="fa-solid fa-circle-question tooltip-icon"></i>
-                <span class="tooltip-text">Covers fraudulent redirection of funds caused by email spoofing or supplier impersonation.</span>
+                <span class="tooltip-text">Defines how company data, accounting records, and client files are backed up and isolated from ransomware.</span>
               </div>
             </div>
-            <select id="social_engineering" name="social_engineering">
-              <option value="Yes - $100k limit" selected>Yes – Include Funds Transfer Fraud ($100k)</option>
-              <option value="No">No</option>
+            <select id="cyber_backup_routine" name="cyber_backup_routine">
+              <option value="Online Backups" selected>Online Backups (Cloud / Automated Sync)</option>
+              <option value="Offline Backups">Offline Backups (Disconnected External Hard Drive / Air-gapped)</option>
+              <option value="Both Online and Offline">Both Online & Offline Backups</option>
+              <option value="Not completed">Not completed</option>
             </select>
-          </div>
-        </div>
-
-        <div class="form-group">
-          <div class="label-wrapper">
-            <label>Cyber Security Controls Checklist:</label>
-            <div class="tooltip-container">
-              <i class="fa-solid fa-circle-question tooltip-icon"></i>
-              <span class="tooltip-text">Check all security measures active in your IT network. Multi-factor authentication is required by most underwriters.</span>
-            </div>
-          </div>
-          <div class="checkbox-group">
-            <label class="checkbox-label"><input type="checkbox" name="cyber_controls[]" value="MFA Email"> MFA on Email Accounts</label>
-            <label class="checkbox-label"><input type="checkbox" name="cyber_controls[]" value="MFA Remote Access"> MFA on Remote / VPN Access</label>
-            <label class="checkbox-label"><input type="checkbox" name="cyber_controls[]" value="Offline Backups"> Offline / Immutable Backups</label>
-            <label class="checkbox-label"><input type="checkbox" name="cyber_controls[]" value="Antivirus EDR"> Endpoint Antivirus Protection</label>
-            <label class="checkbox-label"><input type="checkbox" name="cyber_controls[]" value="Call Verification"> Phone Verification for Bank Changes</label>
           </div>
         </div>
       </fieldset>
 
-      <!-- Section 7: Delta | Optima Management Liability Package -->
-      <fieldset class="fieldset" id="section-ml">
+      <!-- Section 7: Management Liability Package -->
+      <fieldset class="fieldset" id="section-ml" data-step="7">
         <legend>
-          <span class="section-num">7</span><i class="fa-solid fa-user-tie"></i> Delta | Optima Management Liability Package
+          <span class="section-num">7</span><i class="fa-solid fa-user-tie"></i> Management Liability Package
           <label class="section-toggle-wrap">
             <input type="checkbox" name="request_section_ml" value="Yes" checked onchange="toggleSection('section-ml', this.checked)">
             Request Cover
           </label>
         </legend>
-
-        <div class="grid-2">
-          <div class="form-group">
-            <div class="label-wrapper">
-              <label for="ml_limit">Optima Package Limit of Liability <span class="req">*</span></label>
-              <div class="tooltip-container">
-                <i class="fa-solid fa-circle-question tooltip-icon"></i>
-                <span class="tooltip-text">Overall limit of liability across selected Delta Optima Management Liability modules.</span>
-              </div>
-            </div>
-            <select id="ml_limit" name="ml_limit">
-              <option value="$1,000,000" selected>$1,000,000 Limit (Standard)</option>
-              <option value="$2,000,000">$2,000,000 Limit</option>
-              <option value="$5,000,000">$5,000,000 Limit</option>
-            </select>
-          </div>
-
-          <div class="form-group">
-            <div class="label-wrapper">
-              <label for="employee_count">Full-Time Equivalent Staff (FTEs)</label>
-              <div class="tooltip-container">
-                <i class="fa-solid fa-circle-question tooltip-icon"></i>
-                <span class="tooltip-text">Total full-time equivalent employee count used for Employment Practices Liability rating.</span>
-              </div>
-            </div>
-            <input type="number" id="employee_count" name="employee_count" placeholder="e.g. 12" min="1">
-          </div>
+        <div class="section-intro">
+          Protects directors, company managers, and legal entities against defense costs, employment disputes, commercial crime, and regulatory investigations.
         </div>
 
         <div class="form-group">
           <div class="label-wrapper">
-            <label>Select Optima Modular Coverage Sections Required:</label>
+            <label for="ml_limit">Management Liability Package Limit <span class="req">*</span></label>
             <div class="tooltip-container">
               <i class="fa-solid fa-circle-question tooltip-icon"></i>
-              <span class="tooltip-text">Select which Delta Optima modules to include in your management liability package.</span>
+              <span class="tooltip-text">Overall limit of indemnity across selected Management Liability package modules.</span>
             </div>
           </div>
-          <div class="checkbox-group">
-            <label class="checkbox-label">
-              <input type="checkbox" name="ml_covers[]" value="Directors and Officers Liability" checked> 
-              <strong>Directors & Officers (D&O) Liability</strong>
-            </label>
-            <label class="checkbox-label">
-              <input type="checkbox" name="ml_covers[]" value="Employment Practices Liability" checked> 
-              <strong>Employment Practices Liability (EPL)</strong>
-            </label>
-            <label class="checkbox-label">
-              <input type="checkbox" name="ml_covers[]" value="Crime / Employee Dishonesty" checked> 
-              <strong>Commercial Crime</strong>
-            </label>
-            <label class="checkbox-label">
-              <input type="checkbox" name="ml_covers[]" value="Tax Audit Expenses" checked> 
-              <strong>Tax Audit Expenses</strong>
-            </label>
-            <label class="checkbox-label">
-              <input type="checkbox" name="ml_covers[]" value="Consequential Loss (Subject to Availability)"> 
-              <strong>Consequential Loss</strong>
-            </label>
+          <select id="ml_limit" name="ml_limit">
+            <option value="$1,000,000" selected>$1,000,000 Limit (Standard Default)</option>
+            <option value="$2,000,000">$2,000,000 Limit</option>
+            <option value="$5,000,000">$5,000,000 Limit</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <div class="label-wrapper">
+            <label>Select Modular Coverage Sections Required:</label>
+            <div class="tooltip-container">
+              <i class="fa-solid fa-circle-question tooltip-icon"></i>
+              <span class="tooltip-text">Check required coverage modules. Consequential Loss and Tax Audit sections are subject to insurer availability.</span>
+            </div>
           </div>
+          <div style="display:flex; flex-direction:column; gap:10px; margin-top:6px;">
+            <div>
+              <label class="checkbox-label">
+                <input type="checkbox" name="ml_covers[]" value="Directors and Officers Liability" checked> 
+                <strong>Directors & Officers (D&O) Liability</strong>
+              </label>
+              <div class="cover-desc" style="padding-left:28px;">D&O: Protects directors' personal assets against claims of governance breach or wrongful management acts.</div>
+            </div>
+
+            <div>
+              <label class="checkbox-label">
+                <input type="checkbox" id="epl_checkbox" name="ml_covers[]" value="Employment Practices Liability" checked onchange="toggleEplQuestions(this.checked)"> 
+                <strong>Employment Practices Liability (EPL)</strong>
+              </label>
+              <div class="cover-desc" style="padding-left:28px;">EPL: Covers personal grievances, wrongful dismissal, harassment, or discrimination claims by employees.</div>
+            </div>
+
+            <div>
+              <label class="checkbox-label">
+                <input type="checkbox" name="ml_covers[]" value="Commercial Crime" checked> 
+                <strong>Commercial Crime</strong>
+              </label>
+              <div class="cover-desc" style="padding-left:28px;">Crime: Covers direct financial loss caused by employee theft, fraud, embezzlement, or third-party forgery.</div>
+            </div>
+
+            <div>
+              <label class="checkbox-label">
+                <input type="checkbox" name="ml_covers[]" value="Tax Audit Expenses (subject to insurer availability)"> 
+                <strong>Tax Audit Expenses</strong> <span style="font-size:0.72rem; color:#718096;">(subject to insurer availability)</span>
+              </label>
+              <div class="cover-desc" style="padding-left:28px;">Tax Audit: Reimburses professional accounting fees incurred during an Inland Revenue (IRD) tax audit.</div>
+            </div>
+
+            <div>
+              <label class="checkbox-label">
+                <input type="checkbox" name="ml_covers[]" value="Consequential Loss (subject to insurer availability)"> 
+                <strong>Consequential Loss</strong> <span style="font-size:0.72rem; color:#718096;">(subject to insurer availability)</span>
+              </label>
+              <div class="cover-desc" style="padding-left:28px;">Consequential Loss: Covers secondary business losses directly resulting from a management liability event.</div>
+            </div>
+          </div>
+        </div>
+
+        <div id="epl_history_wrap" class="form-group" style="margin-top:12px; background:#F8FAFC; padding:14px; border-radius:8px; border:1px solid #E2E8F0;">
+          <div class="label-wrapper">
+            <label for="epl_pg_history">Previous Personal Grievance (PG) Claims in Last 5 Years?</label>
+            <div class="tooltip-container">
+              <i class="fa-solid fa-circle-question tooltip-icon"></i>
+              <span class="tooltip-text">Disclose if any formal Personal Grievances (PGs), unjustified dismissal claims, or ERA mediation disputes have occurred in the last 5 years.</span>
+            </div>
+          </div>
+          <select id="epl_pg_history" name="epl_pg_history">
+            <option value="No PG claims in past 5 years" selected>No – No Personal Grievance claims in past 5 years</option>
+            <option value="Yes - PG claims occurred">Yes – PG claims or formal disputes occurred (Specify in claims history)</option>
+          </select>
         </div>
       </fieldset>
 
       <!-- Section 8: Life, Medical & Personal Risk Inquiries -->
-      <fieldset class="fieldset" id="section-life">
+      <fieldset class="fieldset" id="section-life" data-step="8">
         <legend><span class="section-num">8</span><i class="fa-solid fa-heart-pulse"></i> Life, Health & Personal Risk Inquiries</legend>
         <div class="section-intro">
           Indicate if you or your key personnel would like to inquire about personal risk protection, key person cover, or group medical insurance options.
@@ -1157,7 +1588,7 @@
       </fieldset>
 
       <!-- Section 9: Declarations & Claims -->
-      <fieldset class="fieldset" id="section-claims">
+      <fieldset class="fieldset" id="section-claims" data-step="9">
         <legend><span class="section-num">9</span><i class="fa-solid fa-file-signature"></i> Claims History & Declarations</legend>
         <div class="section-intro">
           Fulfills statutory Duty of Disclosure under NZ insurance law to ensure policies remain valid and claims are paid without dispute.
@@ -1168,7 +1599,7 @@
             <label for="claims_history">5-Year Claims History across all policy lines <span class="req">*</span></label>
             <div class="tooltip-container">
               <i class="fa-solid fa-circle-question tooltip-icon"></i>
-              <span class="tooltip-text">Detail all previous claims, accidental damages, or insured incidents in the past 5 years (or write 'Nil').</span>
+              <span class="tooltip-text">Detail all previous claims, accidental damages, or insured losses in the past 5 years (or write 'Nil').</span>
             </div>
           </div>
           <textarea id="claims_history" name="claims_history" placeholder="Please detail any losses, incidents, or insurance claims in the past 5 years (or state 'Nil')." required></textarea>
@@ -1186,6 +1617,11 @@
         </div>
       </fieldset>
 
+      <div class="step-nav" id="step-nav">
+        <button type="button" class="step-nav-btn" id="step-back-btn"><i class="fa-solid fa-arrow-left"></i> Back</button>
+        <button type="button" class="step-nav-btn primary" id="step-continue-btn">Continue <i class="fa-solid fa-arrow-right"></i></button>
+      </div>
+
       <button type="submit" class="submit-btn" id="submit-btn">
         <i class="fa-solid fa-paper-plane"></i> Submit Underwriting Schedule
       </button>
@@ -1194,7 +1630,7 @@
     </form>
 
     <div class="form-footer">
-      <p>Data transmitted via HTTPS SSL encryption. PSC Insurance Brokers NZ Ltd. | Contact: gregpscnz@gmail.com</p>
+      <p>Data transmitted via HTTPS SSL encryption. PSC Insurance Brokers NZ Ltd. | Account Lead: Greg.Swaney@Pscbroking.co.nz</p>
     </div>
   </div>
 
@@ -1213,55 +1649,263 @@
       }
     }
 
-    const progressBar = document.getElementById('scroll-progress');
-    function updateProgress() {
-      const scrollable = document.documentElement.scrollHeight - window.innerHeight;
-      const pct = scrollable > 0 ? (window.scrollY / scrollable) * 100 : 0;
-      if (progressBar) progressBar.style.width = pct + '%';
+    function toggleEplQuestions(isChecked) {
+      const wrap = document.getElementById('epl_history_wrap');
+      if (!wrap) return;
+      if (isChecked) {
+        wrap.style.display = 'block';
+      } else {
+        wrap.style.display = 'none';
+      }
     }
-    window.addEventListener('scroll', updateProgress, { passive: true });
-    window.addEventListener('resize', updateProgress);
-    updateProgress();
 
-    const tocLinks = Array.from(document.querySelectorAll('.toc-nav a'));
-    const tocSections = tocLinks
-      .map(link => document.getElementById(link.getAttribute('href').slice(1)))
-      .filter(Boolean);
+    // Dynamic Multi-Location Handler
+    function toggleSecondLocation(isChecked) {
+      const wrap = document.getElementById('second_location_container');
+      if (!wrap) return;
 
-    if ('IntersectionObserver' in window && tocSections.length) {
-      const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-          const link = tocLinks.find(a => a.getAttribute('href') === '#' + entry.target.id);
-          if (!link) return;
-          if (entry.isIntersecting) {
-            tocLinks.forEach(a => a.classList.remove('active'));
-            link.classList.add('active');
+      const inputs = wrap.querySelectorAll('input, select');
+      if (isChecked) {
+        wrap.style.display = 'block';
+        inputs.forEach(el => el.removeAttribute('disabled'));
+      } else {
+        wrap.style.display = 'none';
+        inputs.forEach(el => el.setAttribute('disabled', 'true'));
+      }
+    }
+
+    // Dynamically Build Vehicle Fleet Lines 2 through 15
+    const fleetContainer = document.getElementById('vehicle-fleet-container');
+    if (fleetContainer) {
+      for (let i = 2; i <= 15; i++) {
+        const rowDiv = document.createElement('div');
+        rowDiv.className = 'vehicle-row';
+        rowDiv.id = `vehicle_row_${i}`;
+        rowDiv.style.display = 'none';
+
+        rowDiv.innerHTML = `
+          <div class="vehicle-grid">
+            <div class="vehicle-num">#${i}</div>
+            <div><input type="text" name="veh_year_${i}" placeholder="Year" disabled></div>
+            <div><input type="text" name="veh_model_${i}" placeholder="Make & Model" disabled></div>
+            <div><input type="text" name="veh_rego_${i}" placeholder="Rego / Plate" disabled></div>
+            <div><input type="text" name="veh_value_${i}" placeholder="Sum Insured Excl. GST" disabled></div>
+          </div>
+          <div class="vehicle-add-toggle">
+            <label class="checkbox-label" style="background:transparent; border:none; padding:0; font-weight:600; color:var(--psc-navy);">
+              <input type="checkbox" id="veh_toggle_${i}" onchange="toggleVehicleRow(${i}, this.checked)" disabled>
+              <i class="fa-solid fa-plus-circle" style="color:var(--psc-cyan);"></i> Add another vehicle
+            </label>
+          </div>
+        `;
+        fleetContainer.appendChild(rowDiv);
+      }
+    }
+
+    // Toggle specific vehicle row visibility
+    function toggleVehicleRow(index, isChecked) {
+      const nextIndex = index + 1;
+      if (nextIndex > 15) return;
+
+      const nextRow = document.getElementById(`vehicle_row_${nextIndex}`);
+      if (!nextRow) return;
+
+      const inputs = nextRow.querySelectorAll('input');
+      if (isChecked) {
+        nextRow.style.display = 'block';
+        inputs.forEach(el => el.removeAttribute('disabled'));
+      } else {
+        for (let j = nextIndex; j <= 15; j++) {
+          const r = document.getElementById(`vehicle_row_${j}`);
+          if (r) {
+            r.style.display = 'none';
+            r.querySelectorAll('input').forEach(el => {
+              el.setAttribute('disabled', 'true');
+              if (el.type === 'checkbox') el.checked = false;
+              else if (el.type === 'text') el.value = '';
+            });
           }
+        }
+      }
+    }
+
+    // Toggle Take-Home Details Section
+    function toggleTakeHomeDetails(val) {
+      const wrap = document.getElementById('take_home_details_wrap');
+      if (!wrap) return;
+
+      const inputs = wrap.querySelectorAll('input');
+      if (val === 'Yes - All staff' || val === 'Mix - Certain staff only') {
+        wrap.style.display = 'block';
+        inputs.forEach(el => el.removeAttribute('disabled'));
+      } else {
+        wrap.style.display = 'none';
+        inputs.forEach(el => {
+          el.setAttribute('disabled', 'true');
+          el.value = '';
         });
-      }, { rootMargin: '-45% 0px -50% 0px', threshold: 0 });
-
-      tocSections.forEach(section => observer.observe(section));
+      }
     }
 
-    // Helper: Convert File to Base64
-    function readFileAsBase64(file) {
-      return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onload = () => resolve(reader.result);
-        reader.onerror = error => reject(error);
-        reader.readAsDataURL(file);
-      });
-    }
-
-    // Form Submission Handler
+    // Step Wizard Controller
     const form = document.getElementById('underwriting-form');
     const submitBtn = document.getElementById('submit-btn');
     const statusMsg = document.getElementById('status-msg');
 
+    const stepFieldsets = Array.from(form.querySelectorAll('fieldset.fieldset[data-step]'))
+      .sort((a, b) => Number(a.dataset.step) - Number(b.dataset.step));
+    const totalSteps = stepFieldsets.length;
+    const stepLabels = {};
+    stepFieldsets.forEach(fs => {
+      const legendText = fs.querySelector('legend');
+      let label = legendText ? legendText.textContent.trim() : `Section ${fs.dataset.step}`;
+      label = label.replace(/^\d+\s*/, '').replace(/Request Cover.*$/i, '').replace(/Mandatory Baseline.*$/i, '').trim();
+      stepLabels[fs.dataset.step] = label;
+    });
+
+    let currentStep = 1;
+
+    const stepperFill = document.getElementById('stepper-fill');
+    const stepperLabel = document.getElementById('stepper-label');
+    const stepperCount = document.getElementById('stepper-count');
+    const stepDots = Array.from(document.querySelectorAll('.step-dot'));
+    const stepBackBtn = document.getElementById('step-back-btn');
+    const stepContinueBtn = document.getElementById('step-continue-btn');
+    const stepperBar = document.getElementById('stepper-bar');
+
+    function renderStep(n) {
+      stepFieldsets.forEach(fs => {
+        fs.style.display = (Number(fs.dataset.step) === n) ? '' : 'none';
+      });
+
+      stepperFill.style.width = (n / totalSteps * 100) + '%';
+      stepperLabel.textContent = stepLabels[n] || `Section ${n}`;
+      stepperCount.textContent = `Step ${n} of ${totalSteps}`;
+
+      stepDots.forEach(dot => {
+        const ds = Number(dot.dataset.step);
+        dot.classList.toggle('is-current', ds === n);
+        dot.classList.toggle('is-done', ds < n);
+      });
+
+      stepBackBtn.style.display = (n === 1) ? 'none' : 'inline-flex';
+      stepContinueBtn.style.display = (n === totalSteps) ? 'none' : 'inline-flex';
+      submitBtn.style.display = (n === totalSteps) ? 'flex' : 'none';
+    }
+
+    function goToStep(n) {
+      currentStep = Math.min(Math.max(n, 1), totalSteps);
+      renderStep(currentStep);
+      if (stepperBar) {
+        const top = stepperBar.getBoundingClientRect().top + window.scrollY - 90;
+        window.scrollTo({ top, behavior: 'smooth' });
+      }
+    }
+
+    stepContinueBtn.addEventListener('click', function() {
+      const activeFieldset = stepFieldsets.find(fs => Number(fs.dataset.step) === currentStep);
+      const invalidField = activeFieldset.querySelector(':invalid');
+      if (invalidField) {
+        invalidField.reportValidity();
+        invalidField.focus();
+        return;
+      }
+      goToStep(currentStep + 1);
+    });
+
+    stepBackBtn.addEventListener('click', function() {
+      goToStep(currentStep - 1);
+    });
+
+    stepDots.forEach(dot => {
+      dot.addEventListener('click', function() {
+        goToStep(Number(dot.dataset.step));
+      });
+    });
+
+    function validateAllStepsBeforeSubmit() {
+      stepFieldsets.forEach(fs => { fs.style.display = ''; });
+      const firstInvalid = form.querySelector(':invalid');
+      if (firstInvalid) {
+        const owningFieldset = stepFieldsets.find(fs => fs.contains(firstInvalid));
+        if (owningFieldset) {
+          goToStep(Number(owningFieldset.dataset.step));
+        }
+        setTimeout(() => {
+          firstInvalid.reportValidity();
+          firstInvalid.focus();
+        }, 60);
+        return false;
+      }
+      renderStep(currentStep);
+      return true;
+    }
+
+    renderStep(currentStep);
+
+    // Smart File Reader with Image Compression
+    function processAndReadFile(file) {
+      return new Promise((resolve, reject) => {
+        if (file.type.startsWith('image/')) {
+          const reader = new FileReader();
+          reader.onload = function(event) {
+            const img = new Image();
+            img.onload = function() {
+              const canvas = document.createElement('canvas');
+              let width = img.width;
+              let height = img.height;
+              const maxDim = 1600;
+
+              if (width > maxDim || height > maxDim) {
+                if (width > height) {
+                  height = Math.round((height * maxDim) / width);
+                  width = maxDim;
+                } else {
+                  width = Math.round((width * maxDim) / height);
+                  height = maxDim;
+                }
+              }
+
+              canvas.width = width;
+              canvas.height = height;
+              const ctx = canvas.getContext('2d');
+              ctx.drawImage(img, 0, 0, width, height);
+
+              const compressedBase64 = canvas.toDataURL('image/jpeg', 0.75);
+              resolve({
+                dataUrl: compressedBase64,
+                fileName: file.name.replace(/\.[^/.]+$/, "") + ".jpg",
+                mimeType: "image/jpeg"
+              });
+            };
+            img.onerror = error => reject(error);
+            img.src = event.target.result;
+          };
+          reader.onerror = error => reject(error);
+          reader.readAsDataURL(file);
+        } else {
+          const reader = new FileReader();
+          reader.onload = function() {
+            resolve({
+              dataUrl: reader.result,
+              fileName: file.name,
+              mimeType: file.type || 'application/octet-stream'
+            });
+          };
+          reader.onerror = error => reject(error);
+          reader.readAsDataURL(file);
+        }
+      });
+    }
+
+    // Form Submission Handler
     form.addEventListener('submit', async function(e) {
       e.preventDefault();
 
-      // Honeypot anti-spam check
+      if (!validateAllStepsBeforeSubmit()) {
+        return;
+      }
+
       const honeypot = form.querySelector('input[name="_gotcha"]');
       if (honeypot && honeypot.value !== '') {
         statusMsg.className = 'status-msg success';
@@ -1272,14 +1916,13 @@
       }
 
       submitBtn.disabled = true;
-      submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Uploading & Submitting Schedule...';
+      submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Processing & Submitting Schedule...';
       statusMsg.style.display = 'none';
 
       try {
         const payload = new URLSearchParams();
         const formData = new FormData(form);
 
-        // Collect standard form fields & checkboxes
         for (const [key, value] of formData.entries()) {
           if (key !== 'existing_schedule_upload' && key !== '_gotcha') {
             if (payload.has(key)) {
@@ -1290,14 +1933,14 @@
           }
         }
 
-        // Process File Attachment if present
         const fileInput = document.getElementById('existing_schedule_upload');
         if (fileInput && fileInput.files.length > 0) {
           const file = fileInput.files[0];
-          const base64Data = await readFileAsBase64(file);
-          payload.append('fileData', base64Data);
-          payload.append('fileName', file.name);
-          payload.append('fileMimeType', file.type);
+          const processedFile = await processAndReadFile(file);
+          
+          payload.append('fileData', processedFile.dataUrl);
+          payload.append('fileName', processedFile.fileName);
+          payload.append('fileMimeType', processedFile.mimeType);
         }
 
         const response = await fetch(form.action, {
